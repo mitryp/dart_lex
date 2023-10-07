@@ -1,15 +1,15 @@
 name: lex
 description: Dart lexer for various programming languages.
 version: 0.0.1
-author: Thorsten Lorenz <thlorenz@gmx.de>
+# this pubspec field is deprecated, but credits go to this person, ofc
+# author: Thorsten Lorenz <thlorenz@gmx.de>
 homepage: https://thlorenz.com
 
 environment:
-  sdk: ">=2.2.0 <3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
-  equatable: ^0.5.0
+  equatable: ^2.0.5
 
 dev_dependencies:
-  test: ^1.6.8
-
+  test: ^1.24.0

@@ -2,8 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:lex/base/token.dart';
 
 class UnprocessedToken extends Equatable {
-  UnprocessedToken(this.pos, this.token, this.match)
-      : super([pos, token, match]);
+  UnprocessedToken(this.pos, this.token, this.match);
+
   final int pos;
   final Token token;
   final String match;
@@ -17,4 +17,7 @@ class UnprocessedToken extends Equatable {
     if (match == "'") return "\\'";
     return match;
   }
+
+  @override
+  List<Object> get props => [pos, token, match];
 }

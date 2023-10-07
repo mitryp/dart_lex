@@ -107,25 +107,24 @@ class Parse {
   const Parse(
     this.pattern,
     this.token, [
-    this.newStates = null,
+    this.newStates = const [],
   ]);
   factory Parse.include(String s) => Parse(s, Token.IncludeOtherParse);
   factory Parse.bygroups(
     String pattern,
     List<Token> tokens, [
-    List<String> nextState,
+    List<String>? nextState,
   ]) =>
-      GroupParse(pattern, tokens, nextState);
+      GroupParse(pattern, tokens);
 
-  factory Parse.empty(List<String> nextState) =>
-      Parse('', Token.Text, nextState);
+  factory Parse.empty(List<String> nextState) => Parse('', Token.Text, nextState);
 
   final String pattern;
   final Token token;
   final List<String> newStates;
 
-  Parse get parent => null;
-  List<Token> get groupTokens => null;
+  Parse? get parent => null;
+  List<Token> get groupTokens => [];
 
   String toString() {
     return '''Parse {
@@ -137,12 +136,12 @@ class Parse {
 
   List<String> split() {
     List<String> buf = [];
-    Parse node = this;
+    Parse? node = this;
     while (node != null) {
       buf.add(node.toString());
       node = node.parent;
     }
-    return buf.reversed;
+    return buf.reversed.toList();
   }
 }
 
@@ -151,7 +150,7 @@ class GroupParse extends Parse {
   GroupParse(
     String pattern,
     this.groupTokens, [
-    List<String> newStates = null,
+    List<String> newStates = const [],
   ]) : super(pattern, Token.ParseByGroups);
 
   final List<Token> groupTokens;

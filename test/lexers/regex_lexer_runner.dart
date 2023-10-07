@@ -13,7 +13,12 @@ abstract class RegexLexerRunner {
     for (final spec in specs.entries) {
       final code = spec.key;
       final tokens = spec.value;
-      if (tokens == null) {
+
+      if (tokens.length > 32) {
+        print(tokens.elementAt(32));
+      }
+
+      if (tokens.isEmpty) {
         _log(lexer.getTokensUnprocessed(code));
       } else {
         _check(code, tokens);
@@ -23,7 +28,13 @@ abstract class RegexLexerRunner {
 
   void _check(String code, Iterable<UnprocessedToken> tokens) {
     test(code, () {
-      expect(lexer.getTokensUnprocessed(code), equals(tokens));
+      final t = lexer.getTokensUnprocessed(code);
+
+      if (t.length >= 32) {
+        print('actual ${t.elementAt(32)}');
+      }
+
+      expect(t, equals(tokens));
     });
   }
 }

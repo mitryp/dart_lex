@@ -51,16 +51,14 @@ class TypeScriptLexer extends RegexLexer {
               r'this)\b',
               Token.Keyword,
               ['slashstartsregex']),
-          Parse(r'(var|let|with|const|function)\b', Token.KeywordDeclaration,
-              ['slashstartsregex']),
+          Parse(r'(var|let|with|const|function)\b', Token.KeywordDeclaration, ['slashstartsregex']),
           Parse(
               r'(abstract|async|await|boolean|byte|char|class|debugger|double|enum|export|'
               r'extends|final|float|goto|implements|import|int|interface|long|native|'
               r'package|private|protected|public|short|static|super|synchronized|throws|'
               r'transient|volatile)\b',
               Token.KeywordReserved),
-          Parse(r'(true|false|null|NaN|Infinity|undefined)\b',
-              Token.KeywordConstant),
+          Parse(r'(true|false|null|NaN|Infinity|undefined)\b', Token.KeywordConstant),
           Parse(
               r'(Array|Boolean|Date|Error|Function|Math|netscape|'
               r'Number|Object|Packages|RegExp|String|sun|decodeURI|'
@@ -76,14 +74,12 @@ class TypeScriptLexer extends RegexLexer {
           // Match variable type keywords
           Parse(r'\b(string|bool|number)\b', Token.KeywordType),
           // Match things like: constructor
-          Parse(r'\b(constructor|declare|interface|as|AS)\b',
-              Token.KeywordReserved),
+          Parse(r'\b(constructor|declare|interface|as|AS)\b', Token.KeywordReserved),
           // Match things like: super(argument, list)
-          Parse.bygroups(r'(super)(\s*)(\([\w,?.$\s]+\s*\))',
-              [Token.KeywordReserved, Token.Text], ['slashstartsregex']),
-          // Match things like: function() {...}
-          Parse(r'([a-zA-Z_?.$][\w?.$]*)\(\) \{', Token.NameOther,
+          Parse.bygroups(r'(super)(\s*)(\([\w,?.$\s]+\s*\))', [Token.KeywordReserved, Token.Text],
               ['slashstartsregex']),
+          // Match things like: function() {...}
+          Parse(r'([a-zA-Z_?.$][\w?.$]*)\(\) \{', Token.NameOther, ['slashstartsregex']),
           // Match things like: (function: return type)
           Parse.bygroups(r'([\w?.$][\w?.$]*)(\s*:\s*)([\w?.$][\w?.$]*)',
               [Token.NameOther, Token.Text, Token.KeywordType]),
@@ -97,7 +93,7 @@ class TypeScriptLexer extends RegexLexer {
           // Match things like: Decorators
           Parse(r'@\w+', Token.KeywordDeclaration),
         ],
-        'interp': _jsLexer.parses['interp'],
-        'interp-inside': _jsLexer.parses['interp-inside'],
+        'interp': _jsLexer.parses['interp'] ?? [],
+        'interp-inside': _jsLexer.parses['interp-inside'] ?? [],
       };
 }

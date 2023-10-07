@@ -2,22 +2,11 @@
 import 'package:lex/base/lexer.dart';
 import 'package:lex/unistring.dart';
 
-final JS_IDENT_START = (r'(?:[$_' +
-    uni.combine(['Lu', 'Ll', 'Lt', 'Lm', 'Lo', 'Nl']) +
-    ']|\\\\u[a-fA-F0-9]{4})');
+final JS_IDENT_START =
+    (r'(?:[$_' + uni.combine(['Lu', 'Ll', 'Lt', 'Lm', 'Lo', 'Nl']) + ']|\\\\u[a-fA-F0-9]{4})');
 final JS_IDENT_PART = (r'(?:[$' +
-    uni.combine([
-      'Lu',
-      'Ll',
-      'Lt',
-      'Lm',
-      'Lo',
-      'Nl',
-      'Mn',
-      'Mc',
-      'Nd',
-      'Pc'
-    ]) + /*u*/ '\u200c\u200d]|\\\\u[a-fA-F0-9]{4})');
+    uni.combine(['Lu', 'Ll', 'Lt', 'Lm', 'Lo', 'Nl', 'Mn', 'Mc', 'Nd', 'Pc']) + /*u*/
+    '\u200c\u200d]|\\\\u[a-fA-F0-9]{4})');
 final JS_IDENT = JS_IDENT_START + '(?:' + JS_IDENT_PART + ')*';
 
 class JavaScriptLexer extends RegexLexer {
@@ -83,16 +72,14 @@ class JavaScriptLexer extends RegexLexer {
           r'this|of)\b',
           Token.Keyword,
           ['slashstartsregex']),
-      Parse(r'(var|let|with|function)\b', Token.KeywordDeclaration,
-          ['slashstartsregex']),
+      Parse(r'(var|let|with|function)\b', Token.KeywordDeclaration, ['slashstartsregex']),
       Parse(
           r'(abstract|boolean|byte|char|class|const|debugger|double|enum|export|'
           r'extends|final|float|goto|implements|import|int|interface|long|native|'
           r'package|private|protected|public|short|static|super|synchronized|throws|'
           r'transient|volatile)\b',
           Token.KeywordReserved),
-      Parse(
-          r'(true|false|null|NaN|Infinity|undefined)\b', Token.KeywordConstant),
+      Parse(r'(true|false|null|NaN|Infinity|undefined)\b', Token.KeywordConstant),
       Parse(
           r'(Array|Boolean|Date|Error|Function|Math|netscape|'
           r'Number|Object|Packages|RegExp|String|Promise|Proxy|sun|decodeURI|'

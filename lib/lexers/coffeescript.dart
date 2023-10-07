@@ -7,10 +7,9 @@ class CoffeeScriptLexer extends RegexLexer {
   final filenames = ['*.coffee'];
   final mimetypes = ['text/coffeescript'];
 
-  final _operator_re =
-      (r'\+\+|~|&&|\band\b|\bor\b|\bis\b|\bisnt\b|\bnot\b|\?|:|'
-          r'\|\||\\(?=\n)|'
-          r'(<<|>>>?|==?(?!>)|!=?|=(?!>)|-(?!>)|[<>+*`%&\|\^/])=?');
+  final _operator_re = (r'\+\+|~|&&|\band\b|\bor\b|\bis\b|\bisnt\b|\bnot\b|\?|:|'
+      r'\|\||\\(?=\n)|'
+      r'(<<|>>>?|==?(?!>)|!=?|=(?!>)|-(?!>)|[<>+*`%&\|\^/])=?');
 
   final RegExpFlags flags = RegExpFlags(
     dotAll: true,
@@ -45,8 +44,7 @@ class CoffeeScriptLexer extends RegexLexer {
           Parse.include('commentsandwhitespace'),
           Parse(r'^(?=\s|/)', Token.Text, ['slashstartsregex']),
           Parse(_operator_re, Token.Operator, ['slashstartsregex']),
-          Parse(r'(?:\([^()]*\))?\s*[=-]>', Token.NameFunction,
-              ['slashstartsregex']),
+          Parse(r'(?:\([^()]*\))?\s*[=-]>', Token.NameFunction, ['slashstartsregex']),
           Parse(r'[{(\[;,]', Token.Punctuation, ['slashstartsregex']),
           Parse(r'[})\].]', Token.Punctuation),
           Parse(
@@ -67,10 +65,8 @@ class CoffeeScriptLexer extends RegexLexer {
               r'decodeURIComponent|encodeURI|encodeURIComponent|'
               r'eval|isFinite|isNaN|parseFloat|parseInt|document|window)\b',
               Token.NameBuiltin),
-          Parse(r'[$a-zA-Z_][\w.:$]*\s*[:=]\s', Token.NameVariable,
-              ['slashstartsregex']),
-          Parse(r'@[$a-zA-Z_][\w.:$]*\s*[:=]\s', Token.NameVariableInstance,
-              ['slashstartsregex']),
+          Parse(r'[$a-zA-Z_][\w.:$]*\s*[:=]\s', Token.NameVariable, ['slashstartsregex']),
+          Parse(r'@[$a-zA-Z_][\w.:$]*\s*[:=]\s', Token.NameVariableInstance, ['slashstartsregex']),
           Parse(r'@', Token.NameOther, ['slashstartsregex']),
           Parse(r'@?[$a-zA-Z_][\w$]*', Token.NameOther),
           Parse(r'[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?', Token.NumberFloat),
@@ -92,30 +88,26 @@ class CoffeeScriptLexer extends RegexLexer {
         ],
         'dqs': [
           Parse(r'"', Token.String, [POP]),
-          Parse(r"\\.|'",
-              Token.String), // double-quoted string don't need ' escapes
+          Parse(r"\\.|'", Token.String), // double-quoted string don't need ' escapes
           Parse(r'#\{', Token.StringInterpol, ['interpoling_string']),
           Parse(r'#', Token.String),
           Parse.include('strings')
         ],
         'sqs': [
           Parse(r"'", Token.String, [POP]),
-          Parse(r'#|\\.|"',
-              Token.String), // single quoted strings don't need " escapses
+          Parse(r'#|\\.|"', Token.String), // single quoted strings don't need " escapses
           Parse.include('strings')
         ],
         'tdqs': [
           Parse(r'"""', Token.String, [POP]),
-          Parse(r"\\.|'|" r'"',
-              Token.String), // no need to escape quotes in triple-string
+          Parse(r"\\.|'|" r'"', Token.String), // no need to escape quotes in triple-string
           Parse(r'#\{', Token.StringInterpol, ['interpoling_string']),
           Parse(r'#', Token.String),
           Parse.include('strings'),
         ],
         'tsqs': [
           Parse(r"'''", Token.String, [POP]),
-          Parse(r"#|\\.|'|" r'"',
-              Token.String), // no need to escape quotes in triple-strings
+          Parse(r"#|\\.|'|" r'"', Token.String), // no need to escape quotes in triple-strings
           Parse.include('strings')
         ],
       };

@@ -19,8 +19,7 @@ class DartLexer extends RegexLexer {
           Parse(r'[^\S\n]+', Token.Text),
           Parse(r'//.*?\n', Token.CommentSingle),
           Parse(r'/\*.*?\*/', Token.CommentMultiline),
-          Parse.bygroups(r'\b(class)\b(\s+)',
-              [Token.KeywordDeclaration, Token.Text], ['class']),
+          Parse.bygroups(r'\b(class)\b(\s+)', [Token.KeywordDeclaration, Token.Text], ['class']),
           Parse(
               r'\b(assert|break|case|catch|continue|default|do|else|finally|for|'
               r'if|in|is|new|return|super|switch|this|throw|try|while)\b',
@@ -30,8 +29,7 @@ class DartLexer extends RegexLexer {
               r'implements|native|operator|set|static|sync|typedef|var|with|'
               r'yield)\b',
               Token.KeywordDeclaration),
-          Parse(r'\b(bool|double|dynamic|int|num|Object|String|void)\b',
-              Token.KeywordType),
+          Parse(r'\b(bool|double|dynamic|int|num|Object|String|void)\b', Token.KeywordType),
           Parse(r'\b(false|null|true)\b', Token.KeywordConstant),
           Parse(r'[~!%^&*+=|?:<>/-]|as\b', Token.Operator),
           Parse(r'[a-zA-Z_$]\w*:', Token.NameLabel),
@@ -70,8 +68,7 @@ class DartLexer extends RegexLexer {
               r"\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|u\{[0-9A-Fa-f]*\}|[a-z'"
               r'"$\\])',
               Token.StringEscape),
-          Parse.bygroups(
-              r'(\$)([a-zA-Z_]\w*)', [Token.StringInterpol, Token.Name]),
+          Parse.bygroups(r'(\$)([a-zA-Z_]\w*)', [Token.StringInterpol, Token.Name]),
           Parse.bygroups(r'(\$\{)(.*?)(\})', [
             Token.StringInterpol,
             Token.RecurseSameLexer,

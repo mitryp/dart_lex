@@ -14,19 +14,26 @@ abstract class Lexer {
     this.tabsize = 0,
     this.encoding = 'guess',
   });
+
   final bool stripnl;
   final bool stripall;
   final bool ensurenl;
   final int tabsize;
   final String encoding;
+
   // TODO: left out filter related things
   // final List<String> filters;
 
-  String get name => null;
+  String? get name => null;
+
   List<String> get aliases => [];
+
   List<String> get filenames => [];
+
   List<String> get aliasFilenames => [];
+
   List<String> get mimetypes => [];
+
   int get priority => 0;
 
   // Has to return a float between ``0`` and ``1`` that indicates if a lexer wants to highlight this text. Used by ``guess_lexer``.
@@ -39,8 +46,7 @@ abstract class Lexer {
   // `float`. If the return value is an object that is boolean `False`
   // it's the same as if the return values was ``0.0``.
   double analyseText(String text) {
-    throw new UnimplementedError(
-        'Either inheritor or regex lexer needs to implement this');
+    throw UnimplementedError('Either inheritor or regex lexer needs to implement this');
   }
 
   // Return an iterable of (index, tokentype, value) pairs where "index"
@@ -57,7 +63,7 @@ abstract class Lexer {
   //
   // Also preprocess the text, i.e. expand tabs and strip it if
   // wanted and applies registered filters.
-  List<Parse> getTokens(String text, {bool unfiltered = false}) {
+  List<Parse>? getTokens(String text, {bool unfiltered = false}) {
     // text now *is* a unicode string (TODO: conversion once needed)
     text = text.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
     if (stripall) text = text.trim();
@@ -101,6 +107,7 @@ typedef RegExpMatch RexMatch(String text, int pos);
 // '#push' is a synonym for pushing the current state on the stack.
 abstract class RegexLexer extends Lexer {
   RegExpFlags get flags;
+
   Map<String, List<Parse>> get parses;
 
   // Split ``text`` into (token type, text) pairs.
@@ -112,13 +119,13 @@ abstract class RegexLexer extends Lexer {
   // Stream<Tuple2<index, token, value>>
   Iterable<UnprocessedToken> getTokensUnprocessed(
     String text, [
-    List<String> stack,
+    List<String>? stack,
   ]) sync* {
     int pos = 0;
     Map<String, Iterable<Parse>> parsedefs = _expand(parses);
-    final List<String> statestack = stack ?? List.from(['root']);
-    List<Parse> statetokens = parsedefs[statestack.last];
-    while (true && pos < text.length) {
+    final List<String> statestack = stack ?? ['root'];
+    List<Parse> statetokens = parsedefs[statestack.last]?.toList() ?? [];
+    while (pos < text.length) {
       bool matched = false;
       for (final parse in statetokens) {
         final pattern = parse.pattern;
@@ -132,66 +139,73 @@ abstract class RegexLexer extends Lexer {
           multiLine: flags.multiline,
           caseSensitive: flags.caseSensitive,
         );
+
         final m = regex.matchAsPrefix(text, pos);
 
-        if (m != null) {
-          if (token != null && m.group(0).isNotEmpty) {
-            if (token == Token.ParseByGroups) {
-              yield* this._bygroup(m, parse.groupTokens);
-            } else {
-              yield UnprocessedToken(pos, token, m.group(0));
-            }
-          }
-          pos = m.end;
-          if (newStates != null) {
-            for (final state in newStates) {
-              if (state == POP)
-                this._pop(statestack, 1);
-              else if (state == POP2)
-                this._pop(statestack, 2);
-              else if (state == PUSH)
-                statestack.add(statestack.last);
-              else
-                statestack.add(state);
-            }
-            statetokens = statestack.isEmpty
-                ? parsedefs['root']
-                : parsedefs[statestack.last];
-          }
-          matched = true;
-          break;
+        if (m == null) {
+          continue;
         }
+
+        final group = m.group(0) ?? '';
+
+        if (group.isNotEmpty) {
+          if (token == Token.ParseByGroups) {
+            yield* _bygroup(m, parse.groupTokens);
+          } else {
+            yield UnprocessedToken(pos, token, group);
+          }
+        }
+
+        pos = m.end;
+
+        for (final state in newStates) {
+          var _ = switch (state) {
+            POP => _pop(statestack, 1),
+            POP2 => _pop(statestack, 2),
+            PUSH => statestack.add(statestack.last),
+            _ => statestack.add(state),
+          };
+        }
+
+        statetokens =
+            (statestack.isEmpty ? parsedefs['root'] : parsedefs[statestack.last])?.toList() ?? [];
+
+        matched = true;
+        break;
       }
 
-      if (!matched) {
-        // We are here only if all state tokens have been considered
-        // and there was not a match on any of them.
-        try {
-          if (text[pos] == '\n') {
-            _popTo(statestack, 'root');
-            statetokens = parsedefs['root'];
-            yield UnprocessedToken(pos, Token.Text, '\n');
-            pos++;
-            continue;
-          }
-          yield UnprocessedToken(pos, Token.Error, text[pos]);
+      if (matched) {
+        continue;
+      }
+      // We are here only if all state tokens have been considered
+      // and there was not a match on any of them.
+      try {
+        if (text[pos] == '\n') {
+          _popTo(statestack, 'root');
+          statetokens = parsedefs['root']?.toList() ?? [];
+          yield UnprocessedToken(pos, Token.Text, '\n');
           pos++;
-        } on Exception catch (err) {
-          print(err);
-          break;
+          continue;
         }
+
+        yield UnprocessedToken(pos, Token.Error, text[pos++]);
+      } on Exception catch (err) {
+        print(err);
+        break;
       }
     }
   }
 
-  // Callback that yields multiple actions for each group in the match.
+// Callback that yields multiple actions for each group in the match.
   Iterable<UnprocessedToken> _bygroup(Match m, Iterable<Token> tokens) sync* {
     int groupIdx = 1;
     int pos = m.start;
+
     for (final token in tokens) {
-      final s = m.group(groupIdx);
+      final s = m.group(groupIdx) ?? '';
+
       if (token == Token.RecurseSameLexer) {
-        yield* this.getTokensUnprocessed(s);
+        yield* getTokensUnprocessed(s);
       } else {
         yield UnprocessedToken(pos, token, s);
       }
@@ -219,7 +233,7 @@ abstract class RegexLexer extends Lexer {
     Iterable<Parse> expandList(List<Parse> parses) sync* {
       for (final p in parses) {
         if (p.token == Token.IncludeOtherParse) {
-          yield* expandList(parsesMap[p.pattern]);
+          yield* expandList(parsesMap[p.pattern] ?? []);
         } else {
           yield p;
         }

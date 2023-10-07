@@ -1,7 +1,4 @@
 import 'package:lex/base/lexer.dart';
-import 'package:lex/base/token.dart';
-import 'package:lex/base/types.dart';
-import 'package:lex/base/unprocessed_token.dart';
 import 'package:test/test.dart';
 
 // Tests adapted from: pygments tests/test_regexlexer.py
@@ -25,15 +22,14 @@ class TestTransitionLexer extends RegexLexer {
   };
 
   @override
-  double analyseText(String text) {
-    return null;
-  }
+  double analyseText(String text) => 0;
 
   @override
   RegExpFlags get flags => RegExpFlags();
 }
 
 final _lexer = TestTransitionLexer();
+
 void main() {
   group('regex lexer', () {
     test('Transitions including pop', () {
