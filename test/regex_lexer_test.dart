@@ -6,18 +6,18 @@ import 'package:test/test.dart';
 class TestTransitionLexer extends RegexLexer {
   final Map<String, List<Parse>> parses = {
     'root': [
-      Parse('a', Token.Comment, ['rag']),
-      Parse('e', Token.Comment),
-      Parse('#', Token.Comment, [POP]),
-      Parse('@', Token.Comment, [POP, POP]),
-      Parse.empty(['beer', 'beer']),
+      const Parse('a', Token.Comment, ['rag']),
+      const Parse('e', Token.Comment),
+      const Parse('#', Token.Comment, [POP]),
+      const Parse('@', Token.Comment, [POP, POP]),
+      const Parse.empty(['beer', 'beer']),
     ],
     'beer': [
-      Parse('d', Token.Escape, [POP, POP]),
+      const Parse('d', Token.Escape, [POP, POP]),
     ],
     'rag': [
-      Parse('b', Token.StringEscape, [PUSH]),
-      Parse('c', Token.StringEscape, [POP, 'beer']),
+      const Parse('b', Token.StringEscape, [PUSH]),
+      const Parse('c', Token.StringEscape, [POP, 'beer']),
     ],
   };
 
@@ -25,7 +25,7 @@ class TestTransitionLexer extends RegexLexer {
   double analyseText(String text) => 0;
 
   @override
-  RegExpFlags get flags => RegExpFlags();
+  RegExpFlags get flags => const RegExpFlags();
 }
 
 final _lexer = TestTransitionLexer();
@@ -36,11 +36,11 @@ void main() {
       expect(
         _lexer.getTokensUnprocessed('abcde'),
         equals([
-          UnprocessedToken(0, Token.Comment, 'a'),
-          UnprocessedToken(1, Token.StringEscape, 'b'),
-          UnprocessedToken(2, Token.StringEscape, 'c'),
-          UnprocessedToken(3, Token.Escape, 'd'),
-          UnprocessedToken(4, Token.Comment, 'e'),
+          const UnprocessedToken(0, Token.Comment, 'a'),
+          const UnprocessedToken(1, Token.StringEscape, 'b'),
+          const UnprocessedToken(2, Token.StringEscape, 'c'),
+          const UnprocessedToken(3, Token.Escape, 'd'),
+          const UnprocessedToken(4, Token.Comment, 'e'),
         ]),
       );
     });
@@ -48,9 +48,9 @@ void main() {
       expect(
         _lexer.getTokensUnprocessed('a\ne'),
         equals([
-          UnprocessedToken(0, Token.Comment, 'a'),
-          UnprocessedToken(1, Token.Text, '\n'),
-          UnprocessedToken(2, Token.Comment, 'e'),
+          const UnprocessedToken(0, Token.Comment, 'a'),
+          const UnprocessedToken(1, Token.Text, '\n'),
+          const UnprocessedToken(2, Token.Comment, 'e'),
         ]),
       );
     });
@@ -59,7 +59,7 @@ void main() {
       expect(
         _lexer.getTokensUnprocessed('d'),
         equals([
-          UnprocessedToken(0, Token.Escape, 'd'),
+          const UnprocessedToken(0, Token.Escape, 'd'),
         ]),
       );
     });
@@ -68,8 +68,8 @@ void main() {
       expect(
         _lexer.getTokensUnprocessed('#e'),
         equals([
-          UnprocessedToken(0, Token.Comment, '#'),
-          UnprocessedToken(1, Token.Comment, 'e'),
+          const UnprocessedToken(0, Token.Comment, '#'),
+          const UnprocessedToken(1, Token.Comment, 'e'),
         ]),
       );
     });
@@ -78,8 +78,8 @@ void main() {
       expect(
         _lexer.getTokensUnprocessed('@e'),
         equals([
-          UnprocessedToken(0, Token.Comment, '@'),
-          UnprocessedToken(1, Token.Comment, 'e'),
+          const UnprocessedToken(0, Token.Comment, '@'),
+          const UnprocessedToken(1, Token.Comment, 'e'),
         ]),
       );
     });

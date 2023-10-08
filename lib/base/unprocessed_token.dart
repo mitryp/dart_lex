@@ -1,8 +1,9 @@
 import 'package:equatable/equatable.dart';
-import 'package:lex/base/token.dart';
+
+import 'token.dart';
 
 class UnprocessedToken extends Equatable {
-  UnprocessedToken(this.pos, this.token, this.match);
+  const UnprocessedToken(this.pos, this.token, this.match);
 
   final int pos;
   final Token token;

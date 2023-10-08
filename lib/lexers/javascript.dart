@@ -1,6 +1,5 @@
-// ignore_for_file: non_constant_identifier_names
-import 'package:lex/base/lexer.dart';
-import 'package:lex/unistring.dart';
+import '../base/lexer.dart';
+import '../unistring.dart';
 
 final JS_IDENT_START =
     (r'(?:[$_' + uni.combine(['Lu', 'Ll', 'Lt', 'Lm', 'Lo', 'Nl']) + ']|\\\\u[a-fA-F0-9]{4})');
@@ -20,7 +19,7 @@ class JavaScriptLexer extends RegexLexer {
     'text/javascript'
   ];
 
-  final RegExpFlags flags = RegExpFlags(
+  final RegExpFlags flags = const RegExpFlags(
     dotAll: true,
     unicode: true,
     multiline: true,
@@ -28,13 +27,13 @@ class JavaScriptLexer extends RegexLexer {
 
   final Map<String, List<Parse>> parses = {
     'commentsandwhitespace': [
-      Parse(r'\s+', Token.Text),
-      Parse(r'<!--', Token.Comment),
-      Parse(r'//.*?\n', Token.CommentSingle),
-      Parse(r'/\*.*?\*/', Token.CommentMultiline),
+      const Parse(r'\s+', Token.Text),
+      const Parse(r'<!--', Token.Comment),
+      const Parse(r'//.*?\n', Token.CommentSingle),
+      const Parse(r'/\*.*?\*/', Token.CommentMultiline),
     ],
     'slashstartsregex': [
-      Parse.include('commentsandwhitespace'),
+      const Parse.include('commentsandwhitespace'),
       /* TODO: disabled Lone quantifier brackets
       https://stackoverflow.com/questions/40939209/invalid-regular-expressionlone-quantifier-brackets
       Parse(
@@ -43,44 +42,44 @@ class JavaScriptLexer extends RegexLexer {
           Token.StringRegex,
           [POP]),
        */
-      Parse(r'(?=/)', Token.Text, [POP, 'badregex']),
-      Parse.empty([POP])
+      const Parse(r'(?=/)', Token.Text, [POP, 'badregex']),
+      const Parse.empty([POP])
     ],
     'badregex': [
-      Parse(r'\n', Token.Text, [POP]),
+      const Parse(r'\n', Token.Text, [POP]),
     ],
     'root': [
-      Parse(r'^#! ?/.*?\n', Token.CommentHashbang), // recognized by node.js
-      Parse(r'^(?=\s|/|<!--)', Token.Text, ['slashstartsregex']),
-      Parse.include('commentsandwhitespace'),
-      Parse(r'(\.\d+|[0-9]+\.[0-9]*)([eE][-+]?[0-9]+)?', Token.NumberFloat),
-      Parse(r'0[bB][01]+', Token.NumberBin),
-      Parse(r'0[oO][0-7]+', Token.NumberOct),
-      Parse(r'0[xX][0-9a-fA-F]+', Token.NumberHex),
-      Parse(r'[0-9]+', Token.NumberInteger),
-      Parse(r'\.\.\.|=>', Token.Punctuation),
-      Parse(
+      const Parse(r'^#! ?/.*?\n', Token.CommentHashbang), // recognized by node.js
+      const Parse(r'^(?=\s|/|<!--)', Token.Text, ['slashstartsregex']),
+      const Parse.include('commentsandwhitespace'),
+      const Parse(r'(\.\d+|[0-9]+\.[0-9]*)([eE][-+]?[0-9]+)?', Token.NumberFloat),
+      const Parse(r'0[bB][01]+', Token.NumberBin),
+      const Parse(r'0[oO][0-7]+', Token.NumberOct),
+      const Parse(r'0[xX][0-9a-fA-F]+', Token.NumberHex),
+      const Parse(r'[0-9]+', Token.NumberInteger),
+      const Parse(r'\.\.\.|=>', Token.Punctuation),
+      const Parse(
           r'\+\+|--|~|&&|\?|:|\|\||\\(?=\n)|'
           r'(<<|>>>?|==?|!=?|[-<>+*%&|^/])=?',
           Token.Operator,
           ['slashstartsregex']),
-      Parse(r'[{(\[;,]', Token.Punctuation, ['slashstartsregex']),
-      Parse(r'[})\].]', Token.Punctuation),
-      Parse(
+      const Parse(r'[{(\[;,]', Token.Punctuation, ['slashstartsregex']),
+      const Parse(r'[})\].]', Token.Punctuation),
+      const Parse(
           r'(for|in|while|do|break|return|continue|switch|case|default|if|else|'
           r'throw|try|catch|finally|new|delete|typeof|instanceof|void|yield|'
           r'this|of)\b',
           Token.Keyword,
           ['slashstartsregex']),
-      Parse(r'(var|let|with|function)\b', Token.KeywordDeclaration, ['slashstartsregex']),
-      Parse(
+      const Parse(r'(var|let|with|function)\b', Token.KeywordDeclaration, ['slashstartsregex']),
+      const Parse(
           r'(abstract|boolean|byte|char|class|const|debugger|double|enum|export|'
           r'extends|final|float|goto|implements|import|int|interface|long|native|'
           r'package|private|protected|public|short|static|super|synchronized|throws|'
           r'transient|volatile)\b',
           Token.KeywordReserved),
-      Parse(r'(true|false|null|NaN|Infinity|undefined)\b', Token.KeywordConstant),
-      Parse(
+      const Parse(r'(true|false|null|NaN|Infinity|undefined)\b', Token.KeywordConstant),
+      const Parse(
           r'(Array|Boolean|Date|Error|Function|Math|netscape|'
           r'Number|Object|Packages|RegExp|String|Promise|Proxy|sun|decodeURI|'
           r'decodeURIComponent|encodeURI|encodeURIComponent|'
@@ -89,20 +88,20 @@ class JavaScriptLexer extends RegexLexer {
           Token.NameBuiltin),
       // TODO: should be the below if we want to support unicode
       // Parse(JS_IDENT, Token.NameOther),
-      Parse(r'[a-zA-Z\d_$]+', Token.NameOther),
-      Parse(r'"(\\\\|\\"|[^"])*"', Token.StringDouble),
-      Parse(r"'(\\\\|\\'|[^'])*'", Token.StringSingle),
-      Parse(r'`', Token.StringBacktick, ['interp']),
+      const Parse(r'[a-zA-Z\d_$]+', Token.NameOther),
+      const Parse(r'"(\\\\|\\"|[^"])*"', Token.StringDouble),
+      const Parse(r"'(\\\\|\\'|[^'])*'", Token.StringSingle),
+      const Parse(r'`', Token.StringBacktick, ['interp']),
     ],
     'interp': [
-      Parse(r'`', Token.StringBacktick, [POP]),
-      Parse(r'\\\\', Token.StringBacktick),
-      Parse(r'\\`', Token.StringBacktick),
-      Parse(r'\$\{', Token.StringInterpol, ['interp-inside']),
-      Parse(r'\$', Token.StringBacktick),
-      Parse(r'[^`\\$]+', Token.StringBacktick),
+      const Parse(r'`', Token.StringBacktick, [POP]),
+      const Parse(r'\\\\', Token.StringBacktick),
+      const Parse(r'\\`', Token.StringBacktick),
+      const Parse(r'\$\{', Token.StringInterpol, ['interp-inside']),
+      const Parse(r'\$', Token.StringBacktick),
+      const Parse(r'[^`\\$]+', Token.StringBacktick),
     ],
-    'interp-inside': [
+    'interp-inside': const [
       Parse(r'\}', Token.StringInterpol, [POP]),
       Parse.include('root'),
     ],

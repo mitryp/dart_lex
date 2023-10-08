@@ -1,4 +1,4 @@
-import 'package:lex/base/lexer.dart';
+import '../base/lexer.dart';
 
 // For `CoffeeScript`_ source code. http://coffeescript.org
 class CoffeeScriptLexer extends RegexLexer {
@@ -11,25 +11,25 @@ class CoffeeScriptLexer extends RegexLexer {
       r'\|\||\\(?=\n)|'
       r'(<<|>>>?|==?(?!>)|!=?|=(?!>)|-(?!>)|[<>+*`%&\|\^/])=?');
 
-  final RegExpFlags flags = RegExpFlags(
+  final RegExpFlags flags = const RegExpFlags(
     dotAll: true,
   );
   Map<String, List<Parse>> get parses => {
-        'commentsandwhitespace': [
+        'commentsandwhitespace': const [
           Parse(r'\s+', Token.Text),
           Parse(r'###[^#].*?###', Token.CommentMultiline),
           Parse(r'#(?!##[^#]).*?\n', Token.CommentSingle),
         ],
-        'multilineregex': [
+        'multilineregex': const [
           Parse(r'[^/#]+', Token.StringRegex),
           Parse(r'///([gim]+\b|\B)', Token.StringRegex, [POP]),
           Parse(r'#\{', Token.StringInterpol, ['interpoling_string']),
           Parse(r'[/#]', Token.StringRegex),
         ],
         'slashstartsregex': [
-          Parse.include('commentsandwhitespace'),
-          Parse(r'///', Token.StringRegex, ([POP, 'multilineregex'])),
-          Parse(
+          const Parse.include('commentsandwhitespace'),
+          const Parse(r'///', Token.StringRegex, ([POP, 'multilineregex'])),
+          const Parse(
               r'/(?! )(\\.|[^[/\\\n]|\[(\\.|[^\]\\\n])*])+/'
               r'([gim]+\b|\B)',
               Token.StringRegex,
@@ -37,17 +37,17 @@ class CoffeeScriptLexer extends RegexLexer {
           // This isn't really guarding against mis-highlighting well-formed
           // code, just the ability to infinite-loop between root and
           // slashstartsregex.
-          Parse(r'/', Token.Operator),
-          Parse.empty([POP]),
+          const Parse(r'/', Token.Operator),
+          const Parse.empty([POP]),
         ],
         'root': [
-          Parse.include('commentsandwhitespace'),
-          Parse(r'^(?=\s|/)', Token.Text, ['slashstartsregex']),
+          const Parse.include('commentsandwhitespace'),
+          const Parse(r'^(?=\s|/)', Token.Text, ['slashstartsregex']),
           Parse(_operator_re, Token.Operator, ['slashstartsregex']),
-          Parse(r'(?:\([^()]*\))?\s*[=-]>', Token.NameFunction, ['slashstartsregex']),
-          Parse(r'[{(\[;,]', Token.Punctuation, ['slashstartsregex']),
-          Parse(r'[})\].]', Token.Punctuation),
-          Parse(
+          const Parse(r'(?:\([^()]*\))?\s*[=-]>', Token.NameFunction, ['slashstartsregex']),
+          const Parse(r'[{(\[;,]', Token.Punctuation, ['slashstartsregex']),
+          const Parse(r'[})\].]', Token.Punctuation),
+          const Parse(
               r'(?<![.$])(for|own|in|of|while|until|'
               r'loop|break|return|continue|'
               r'switch|when|then|if|unless|else|'
@@ -55,60 +55,61 @@ class CoffeeScriptLexer extends RegexLexer {
               r'extends|this|class|by)\b',
               Token.Keyword,
               ['slashstartsregex']),
-          Parse(
+          const Parse(
               r'(?<![.$])(true|false|yes|no|on|off|null|'
               r'NaN|Infinity|undefined)\b',
               Token.KeywordConstant),
-          Parse(
+          const Parse(
               r'(Array|Boolean|Date|Error|Function|Math|netscape|'
               r'Number|Object|Packages|RegExp|String|sun|decodeURI|'
               r'decodeURIComponent|encodeURI|encodeURIComponent|'
               r'eval|isFinite|isNaN|parseFloat|parseInt|document|window)\b',
               Token.NameBuiltin),
-          Parse(r'[$a-zA-Z_][\w.:$]*\s*[:=]\s', Token.NameVariable, ['slashstartsregex']),
-          Parse(r'@[$a-zA-Z_][\w.:$]*\s*[:=]\s', Token.NameVariableInstance, ['slashstartsregex']),
-          Parse(r'@', Token.NameOther, ['slashstartsregex']),
-          Parse(r'@?[$a-zA-Z_][\w$]*', Token.NameOther),
-          Parse(r'[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?', Token.NumberFloat),
-          Parse(r'0x[0-9a-fA-F]+', Token.NumberHex),
-          Parse(r'[0-9]+', Token.NumberInteger),
-          Parse('"""', Token.String, ['tdqs']),
-          Parse("'''", Token.String, ['tsqs']),
-          Parse('"', Token.String, ['dqs']),
-          Parse("'", Token.String, ['sqs']),
+          const Parse(r'[$a-zA-Z_][\w.:$]*\s*[:=]\s', Token.NameVariable, ['slashstartsregex']),
+          const Parse(
+              r'@[$a-zA-Z_][\w.:$]*\s*[:=]\s', Token.NameVariableInstance, ['slashstartsregex']),
+          const Parse(r'@', Token.NameOther, ['slashstartsregex']),
+          const Parse(r'@?[$a-zA-Z_][\w$]*', Token.NameOther),
+          const Parse(r'[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?', Token.NumberFloat),
+          const Parse(r'0x[0-9a-fA-F]+', Token.NumberHex),
+          const Parse(r'[0-9]+', Token.NumberInteger),
+          const Parse('"""', Token.String, ['tdqs']),
+          const Parse("'''", Token.String, ['tsqs']),
+          const Parse('"', Token.String, ['dqs']),
+          const Parse("'", Token.String, ['sqs']),
         ],
         'strings': [
-          Parse(r"[^#\\'" r'"]+', Token.String),
+          const Parse(r"[^#\\'" r'"]+', Token.String),
           // note that all coffee script strings are multi-line.
           // hash marks, quotes and backslashes must be parsed one at a time
         ],
         'interpoling_string': [
-          Parse(r'\}', Token.StringInterpol, [POP]),
-          Parse.include('root')
+          const Parse(r'\}', Token.StringInterpol, [POP]),
+          const Parse.include('root')
         ],
         'dqs': [
-          Parse(r'"', Token.String, [POP]),
-          Parse(r"\\.|'", Token.String), // double-quoted string don't need ' escapes
-          Parse(r'#\{', Token.StringInterpol, ['interpoling_string']),
-          Parse(r'#', Token.String),
-          Parse.include('strings')
+          const Parse(r'"', Token.String, [POP]),
+          const Parse(r"\\.|'", Token.String), // double-quoted string don't need ' escapes
+          const Parse(r'#\{', Token.StringInterpol, ['interpoling_string']),
+          const Parse(r'#', Token.String),
+          const Parse.include('strings')
         ],
         'sqs': [
-          Parse(r"'", Token.String, [POP]),
-          Parse(r'#|\\.|"', Token.String), // single quoted strings don't need " escapses
-          Parse.include('strings')
+          const Parse(r"'", Token.String, [POP]),
+          const Parse(r'#|\\.|"', Token.String), // single quoted strings don't need " escapses
+          const Parse.include('strings')
         ],
         'tdqs': [
-          Parse(r'"""', Token.String, [POP]),
-          Parse(r"\\.|'|" r'"', Token.String), // no need to escape quotes in triple-string
-          Parse(r'#\{', Token.StringInterpol, ['interpoling_string']),
-          Parse(r'#', Token.String),
-          Parse.include('strings'),
+          const Parse(r'"""', Token.String, [POP]),
+          const Parse(r"\\.|'|" r'"', Token.String), // no need to escape quotes in triple-string
+          const Parse(r'#\{', Token.StringInterpol, ['interpoling_string']),
+          const Parse(r'#', Token.String),
+          const Parse.include('strings'),
         ],
         'tsqs': [
-          Parse(r"'''", Token.String, [POP]),
-          Parse(r"#|\\.|'|" r'"', Token.String), // no need to escape quotes in triple-strings
-          Parse.include('strings')
+          const Parse(r"'''", Token.String, [POP]),
+          const Parse(r"#|\\.|'|" r'"', Token.String), // no need to escape quotes in triple-strings
+          const Parse.include('strings')
         ],
       };
 }

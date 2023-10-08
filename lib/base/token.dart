@@ -4,7 +4,6 @@ enum Token {
   Escape,
   Error,
   Other,
-
   Keyword,
   KeywordConstant,
   KeywordDeclaration,
@@ -12,37 +11,29 @@ enum Token {
   KeywordPseudo,
   KeywordReserved,
   KeywordType,
-
   Name,
   NameAttribute,
-
   NameBuiltin,
   NameBuiltinPseudo,
-
   NameClass,
   NameConstant,
   NameDecorator,
   NameEntity,
   NameException,
-
   NameFunction,
   NameFunctionMagic,
-
   NameProperty,
   NameLabel,
   NameNamespace,
   NameOther,
   NameTag,
-
   NameVariable,
   NameVariableClass,
   NameVariableGlobal,
   NameVariableInstance,
   NameVariableMagic,
-
   Literal,
   LiteralDate,
-
   String,
   StringAffix,
   StringBacktick,
@@ -57,22 +48,16 @@ enum Token {
   StringRegex,
   StringSingle,
   StringSymbol,
-
   Number,
   NumberBin,
   NumberFloat,
   NumberHex,
-
   NumberInteger,
   NumberIntegerLong,
-
   NumberOct,
-
   Operator,
   OperatorWord,
-
   Punctuation,
-
   Comment,
   CommentHashbang,
   CommentMultiline,
@@ -80,7 +65,6 @@ enum Token {
   CommentPreprocFile,
   CommentSingle,
   CommentSpecial,
-
   Generic,
   GenericDeleted,
   GenericEmph,
@@ -109,7 +93,11 @@ class Parse {
     this.token, [
     this.newStates = const [],
   ]);
-  factory Parse.include(String s) => Parse(s, Token.IncludeOtherParse);
+
+  const Parse.include(String s) : this(s, Token.IncludeOtherParse);
+
+  const Parse.empty(List<String> nextState) : this('', Token.Text, nextState);
+
   factory Parse.bygroups(
     String pattern,
     List<Token> tokens, [
@@ -117,13 +105,12 @@ class Parse {
   ]) =>
       GroupParse(pattern, tokens);
 
-  factory Parse.empty(List<String> nextState) => Parse('', Token.Text, nextState);
-
   final String pattern;
   final Token token;
   final List<String> newStates;
 
   Parse? get parent => null;
+
   List<Token> get groupTokens => [];
 
   String toString() {
@@ -147,7 +134,7 @@ class Parse {
 
 // Yields multiple actions for each group in the match.
 class GroupParse extends Parse {
-  GroupParse(
+  const GroupParse(
     String pattern,
     this.groupTokens, [
     List<String> newStates = const [],

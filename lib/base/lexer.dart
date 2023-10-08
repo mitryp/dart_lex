@@ -1,13 +1,13 @@
-import 'package:lex/base/token.dart';
-import 'package:lex/base/types.dart';
-import 'package:lex/base/unprocessed_token.dart';
+import 'token.dart';
+import 'types.dart';
+import 'unprocessed_token.dart';
 
 export 'package:lex/base/token.dart';
 export 'package:lex/base/types.dart';
 export 'package:lex/base/unprocessed_token.dart';
 
 abstract class Lexer {
-  Lexer({
+  const Lexer({
     this.stripnl = true,
     this.stripall = false,
     this.ensurenl = true,

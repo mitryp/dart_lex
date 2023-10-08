@@ -93,9 +93,11 @@ const cats = [
 // TODO: figure out what uni.combine does in Python version
 // For now don't need it as long as we don't encounter any unicode languages
 class Uni {
+  const Uni();
+
   String combine(List<String> ss) {
     return '';
   }
 }
 
-final uni = Uni();
+const uni = Uni();
