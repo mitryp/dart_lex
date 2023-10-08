@@ -106,6 +106,8 @@ typedef RegExpMatch RexMatch(String text, int pos);
 // instead. To pop more than one state, use '#pop:2' and so on.
 // '#push' is a synonym for pushing the current state on the stack.
 abstract class RegexLexer extends Lexer {
+  const RegexLexer();
+
   RegExpFlags get flags;
 
   Map<String, List<Parse>> get parses;
