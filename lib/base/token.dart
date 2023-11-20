@@ -1,3 +1,5 @@
+import 'lexer.dart';
+
 enum Token {
   Text,
   Whitespace,
@@ -92,6 +94,7 @@ class Parse {
     this.pattern,
     this.token, [
     this.newStates = const [],
+    this.flags,
   ]);
 
   const Parse.include(String s) : this(s, Token.IncludeOtherParse);
@@ -108,6 +111,7 @@ class Parse {
   final String pattern;
   final Token token;
   final List<String> newStates;
+  final RegExpFlags? flags;
 
   Parse? get parent => null;
 

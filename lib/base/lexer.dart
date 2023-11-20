@@ -130,9 +130,9 @@ abstract class RegexLexer extends Lexer {
     while (pos < text.length) {
       bool matched = false;
       for (final parse in statetokens) {
-        final pattern = parse.pattern;
-        final token = parse.token;
-        final newStates = parse.newStates;
+        final Parse(:pattern, :token, :newStates, flags: flagsOverride) = parse;
+
+        final flags = flagsOverride ?? this.flags;
 
         final regex = RegExp(
           pattern,
